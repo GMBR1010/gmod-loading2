@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carregando - GMBR</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            font-family: 'Rajdhani', sans-serif;
+            color: #39ff14;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Fundo animado com grid */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
+        }
+
+        /* Linhas de scan */
+        .scanlines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            animation: scanlines 0.1s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 2px; }
+        }
+
+        /* Partículas */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #39ff14;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14;
+            animation: particleFloat 8s infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: scale(1); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+        }
+
+        /* Container principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Logo */
+        .logo-container {
+            margin-bottom: 30px;
+        }
+
+        .flag {
+            font-size: 60px;
+            animation: pulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.5));
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .server-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4em;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            text-shadow: 
+                0 0 10px #39ff14,
+                0 0 20px #39ff14,
+                0 0 40px #39ff14,
+                0 0 80px #39ff14;
+            animation: glow 2s ease-in-out infinite alternate;
+            margin: 20px 0;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 40px #39ff14; }
+            to { text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 60px #39ff14, 0 0 80px #39ff14; }
+        }
+
+        .gamemode {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            color: #00ff00;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* Info do jogador */
+        .player-info {
+            margin: 40px 0;
+            padding: 20px 40px;
+            background: rgba(57, 255, 20, 0.05);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .player-info p {
+            font-size: 1.2em;
+            margin: 8px 0;
+            color: #aaffaa;
+        }
+
+        .player-info .label {
+            color: #39ff14;
+            font-weight: 600;
+        }
+
+        /* Barra de progresso */
+        .progress-container {
+            width: 500px;
+            max-width: 90vw;
+            margin: 30px auto;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 2px solid #39ff14;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #39ff14, #00ff00);
+            background-size: 200% 100%;
+            animation: progressGlow 2s linear infinite;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px #39ff14;
+        }
+
+        @keyframes progressGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* Status de download */
+        .download-status {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #888;
+            min-height: 25px;
+        }
+
+        .download-status.active {
+            color: #39ff14;
+        }
+
+        /* Dicas */
+        .tips-container {
+            margin-top: 40px;
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        .tip {
+            font-size: 1.1em;
+            color: #aaa;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInOut 8s infinite;
+        }
+
+        .tip::before {
+            content: '💡 ';
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            10%, 90% { opacity: 1; }
+        }
+
+        /* Controle de música - CANTO INFERIOR ESQUERDO */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .music-btn {
+            background: transparent;
+            border: 2px solid #39ff14;
+            color: #39ff14;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-btn:hover {
+            background: #39ff14;
+            color: #000;
+            box-shadow: 0 0 20px #39ff14;
+            transform: scale(1.1);
+        }
+
+        .music-btn:active {
+            transform: scale(0.95);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(57, 255, 20, 0.3);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #39ff14;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #39ff14;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background: #39ff14;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #39ff14;
+            border: none;
+        }
+
+        .music-label {
+            font-size: 1.2em;
+            color: #39ff14;
+        }
+
+        /* Efeitos visuais extras */
+        .corner {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            border: 3px solid #39ff14;
+            opacity: 0.5;
+        }
+
+        .corner-tl {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2s infinite linear alternate-reverse;
+            color: #ff0000;
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 3s infinite linear alternate-reverse;
+            color: #0000ff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(-2px, 2px); }
+            20% { clip-path: inset(20% 0 60% 0); transform: translate(2px, -2px); }
+            40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(2px, -2px); }
+            20% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 2px); }
+            40% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
+            80% { clip-path: inset(5% 0 80% 0); transform: translate(2px, -2px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="background">
+        <div class="grid"></div>
+        <div class="scanlines"></div>
+    </div>
+
+    <!-- Cantos decorativos -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- Partículas -->
+    <div class="particles">
+        <div class="particle" style="left: 5%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 15%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 25%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 0.5s;"></div>
+        <div class="particle" style="left: 45%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 55%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 0.8s;"></div>
+        <div class="particle" style="left: 75%; animation-delay: 1.8s;"></div>
+        <div class="particle" style="left: 85%; animation-delay: 2.8s;"></div>
+        <div class="particle" style="left: 95%; animation-delay: 0.3s;"></div>
+    </div>
+
+    <!-- Container principal -->
+    <div class="container">
+        <div class="logo-container">
+            <div class="flag">🇧🇷</div>
+            <h1 class="server-name glitch" data-text="GMBR">GMBR</h1>
+            <p class="gamemode">Trouble in Terrorist Town</p>
+        </div>
+
+        <!-- Info do jogador -->
+        <div class="player-info">
+            <p><span class="label">Jogador:</span> <span id="player-name">Carregando...</span></p>
+            <p><span class="label">Mapa:</span> <span id="map-name">Carregando...</span></p>
+        </div>
+
+        <!-- Barra de progresso -->
+        <div class="progress-container">
+            <div class="progress-text">
+                <span>Carregando...</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="download-status" id="download-status"></div>
+        </div>
+
+        <!-- Dicas -->
+        <div class="tips-container">
+            <p class="tip" id="tip-text">Descubra os traidores antes que seja tarde demais!</p>
+        </div>
+    </div>
+
+    <!-- Controle de música -->
+    <div class="music-control">
+        <span class="music-label">🎵</span>
+        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">⏸</button>
+        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="30" oninput="setVolume(this.value)">
+    </div>
+
+    <!-- Player de áudio -->
+    <audio id="background-music" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // ========== CONFIGURAÇÕES ==========
+        const tips = [
+            "Descubra os traidores antes que seja tarde demais!",
+            "Detetives podem usar equipamentos especiais para investigar.",
+            "Cuidado! Qualquer um pode ser um traidor...",
+            "Não mate inocentes! RDM é proibido.",
+            "Use o corpo dos mortos para descobrir pistas.",
+            "Traidores podem comprar armas especiais no menu T.",
+            "Trabalhe em equipe para sobreviver!",
+            "Preste atenção nos sons e movimentos suspeitos.",
+            "O karma baixo reduz seu dano - jogue limpo!",
+            "Comunique-se com sua equipe usando o chat de voz."
+        ];
+
+        let currentTip = 0;
+        let isPlaying = false;
+        const audio = document.getElementById('background-music');
+
+        // Configurar volume inicial e tempo de início
+        audio.volume = 0.3;
+        audio.currentTime = 50; // COMEÇA AOS 50 SEGUNDOS
+
+        // Rotação de dicas
+        function rotateTips() {
+            const tipElement = document.getElementById('tip-text');
+            currentTip = (currentTip + 1) % tips.length;
+            tipElement.style.animation = 'none';
+            tipElement.offsetHeight; // Trigger reflow
+            tipElement.textContent = tips[currentTip];
+            tipElement.style.animation = 'fadeInOut 8s infinite';
+        }
+
+        setInterval(rotateTips, 8000);
+
+        // ========== FUNÇÕES DO GMOD ==========
+        
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            // Não precisamos usar essas informações aqui
+        }
+
+        function SetPlayerName(name) {
+            document.getElementById('player-name').textContent = name || 'Jogador';
+        }
+
+        function SetMap(mapname) {
+            document.getElementById('map-name').textContent = mapname || 'Carregando...';
+        }
+
+        function SetFilesTotal(total) {
+            window.totalFiles = total;
+        }
+
+        function SetFilesNeeded(needed) {
+            if (window.totalFiles && window.totalFiles > 0) {
+                const downloaded = window.totalFiles - needed;
+                const percent = Math.round((downloaded / window.totalFiles) * 100);
+                updateProgress(percent);
+            }
+        }
+
+        function DownloadingFile(fileName) {
+            const statusEl = document.getElementById('download-status');
+            statusEl.classList.add('active');
+            
+            let displayName = fileName;
+            if (fileName.length > 50) {
+                displayName = '...' + fileName.substring(fileName.length - 47);
+            }
+            statusEl.textContent = '📥 ' + displayName;
+        }
+
+        function SetStatusChanged(status) {
+            const statusEl = document.getElementById('download-status');
+            statusEl.textContent = status;
+        }
+
+        function updateProgress(percent) {
+            const fill = document.getElementById('progress-fill');
+            const text = document.getElementById('progress-percent');
+            fill.style.width = percent + '%';
+            text.textContent = percent + '%';
+        }
+
+        // ========== CONTROLE DE MÚSICA ==========
+        
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle');
+            
+            if (isPlaying) {
+                audio.pause();
+                btn.textContent = '▶';
+                isPlaying = false;
+            } else {
+                audio.play().then(() => {
+                    btn.textContent = '⏸';
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log('Erro ao tocar:', err);
+                });
+            }
+        }
+
+        function setVolume(value) {
+            audio.volume = value / 100;
+        }
+
+        // Loop infinito - quando terminar, volta para 50 segundos
+        audio.addEventListener('ended', function() {
+            audio.currentTime = 50;
+            audio.play();
+        });
+
+        // Inicialização
+        window.onload = function() {
+            // Tenta tocar automaticamente após 500ms
+            setTimeout(() => {
+                audio.play().then(() => {
+                    document.getElementById('music-toggle').textContent = '⏸';
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log('Autoplay bloqueado - usuário precisa interagir primeiro');
+                    // Mantém o botão como play
+                    document.getElementById('music-toggle').textContent = '▶';
+                });
+            }, 500);
+            
+            // Simula progresso para teste (remova em produção)
+            // let testProgress = 0;
+            // setInterval(() => {
+            //     testProgress += 1;
+            //     if (testProgress <= 100) updateProgress(testProgress);
+            // }, 100);
+        };
+
+        // Permite iniciar música com qualquer interação
+        document.addEventListener('click', function initAudio() {
+            if (!isPlaying) {
+                audio.play().then(() => {
+                    document.getElementById('music-toggle').textContent = '⏸';
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log('Erro ao tocar:', err);
+                });
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
