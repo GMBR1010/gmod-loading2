@@ -1,630 +1,807 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carregando - GMBR</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Agentes — Guarnições Policiais</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  :root {
+    --bg:       #0a0c10;
+    --bg2:      #10131a;
+    --bg3:      #161b25;
+    --border:   rgba(255,255,255,0.07);
+    --border2:  rgba(255,255,255,0.13);
+    --text:     #e8eaf0;
+    --muted:    #6b7280;
+    --accent:   #3b82f6;
+    --accent2:  #1d4ed8;
 
-        body {
-            background: #000000;
-            min-height: 100vh;
-            font-family: 'Rajdhani', sans-serif;
-            color: #39ff14;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+    --core:  #3b82f6;
+    --garra: #22c55e;
+    --draco: #ef4444;
+    --sat:   #f59e0b;
+    --deic:  #a855f7;
 
-        /* Fundo animado com grid */
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
+    --core-bg:  rgba(59,130,246,0.1);
+    --garra-bg: rgba(34,197,94,0.1);
+    --draco-bg: rgba(239,68,68,0.1);
+    --sat-bg:   rgba(245,158,11,0.1);
+    --deic-bg:  rgba(168,85,247,0.1);
+  }
 
-        .grid {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
-        }
+  html, body { height: 100%; }
 
-        @keyframes gridMove {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
 
-        /* Linhas de scan */
-        .scanlines {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.1) 0px,
-                rgba(0, 0, 0, 0.1) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            animation: scanlines 0.1s linear infinite;
-        }
+  /* ── SIDEBAR ── */
+  .layout { display: flex; min-height: 100vh; }
 
-        @keyframes scanlines {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 2px; }
-        }
+  .sidebar {
+    width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+  }
 
-        /* Partículas */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #39ff14;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14;
-            animation: particleFloat 8s infinite;
-        }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
 
-        @keyframes particleFloat {
-            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; transform: scale(1); }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) scale(0); opacity: 0; }
-        }
+  .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
+  .logo-text { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .06em; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 10px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
 
-        /* Container principal */
-        .container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 40px;
-        }
+  .nav { padding: 16px 12px; flex: 1; }
+  .nav-label { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; padding: 0 8px; margin-bottom: 8px; }
 
-        /* Logo */
-        .logo-container {
-            margin-bottom: 30px;
-        }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .15s;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
 
-        .flag {
-            font-size: 60px;
-            animation: pulse 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.5));
-        }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.15); color: var(--accent); }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
 
-        .server-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4em;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            text-shadow: 
-                0 0 10px #39ff14,
-                0 0 20px #39ff14,
-                0 0 40px #39ff14,
-                0 0 80px #39ff14;
-            animation: glow 2s ease-in-out infinite alternate;
-            margin: 20px 0;
-        }
+  .nav-count {
+    margin-left: auto;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(255,255,255,0.06);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 40px #39ff14; }
-            to { text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 60px #39ff14, 0 0 80px #39ff14; }
-        }
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+  }
 
-        .gamemode {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5em;
-            color: #00ff00;
-            letter-spacing: 10px;
-            text-transform: uppercase;
-            opacity: 0.8;
-        }
+  /* ── MAIN ── */
+  .main { margin-left: 220px; flex: 1; padding: 0; }
 
-        /* Info do jogador */
-        .player-info {
-            margin: 40px 0;
-            padding: 20px 40px;
-            background: rgba(57, 255, 20, 0.05);
-            border: 1px solid rgba(57, 255, 20, 0.3);
-            border-radius: 10px;
-            display: inline-block;
-        }
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
 
-        .player-info p {
-            font-size: 1.2em;
-            margin: 8px 0;
-            color: #aaffaa;
-        }
+  .topbar-title { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: .04em; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
 
-        .player-info .label {
-            color: #39ff14;
-            font-weight: 600;
-        }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
+    animation: pulse 2s ease-in-out infinite;
+  }
 
-        /* Barra de progresso */
-        .progress-container {
-            width: 500px;
-            max-width: 90vw;
-            margin: 30px auto;
-        }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
+  .status-text { font-size: 12px; color: var(--muted); }
 
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: rgba(57, 255, 20, 0.1);
-            border: 2px solid #39ff14;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
+  .content { padding: 32px; }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff00, #39ff14, #00ff00);
-            background-size: 200% 100%;
-            animation: progressGlow 2s linear infinite;
-            border-radius: 8px;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 20px #39ff14;
-        }
+  /* ── STATS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
 
-        @keyframes progressGlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    transition: border-color .2s;
+  }
 
-        /* Status de download */
-        .download-status {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #888;
-            min-height: 25px;
-        }
+  .stat-card:hover { border-color: var(--border2); }
+  .stat-num { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .stat-lbl { font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; font-weight: 500; }
+  .stat-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
-        .download-status.active {
-            color: #39ff14;
-        }
+  /* ── FORM ── */
+  .form-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 28px;
+  }
 
-        /* Dicas */
-        .tips-container {
-            margin-top: 40px;
-            padding: 20px;
-            max-width: 600px;
-        }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
 
-        .tip {
-            font-size: 1.1em;
-            color: #aaa;
-            font-style: italic;
-            opacity: 0;
-            animation: fadeInOut 8s infinite;
-        }
+  .section-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: rgba(59,130,246,0.15);
+    display: flex; align-items: center; justify-content: center;
+  }
 
-        .tip::before {
-            content: '💡 ';
-        }
+  .section-icon svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .section-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: .05em; color: #fff; }
 
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; }
-            10%, 90% { opacity: 1; }
-        }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 160px 180px; gap: 12px; align-items: end; }
 
-        /* Controle de música - CANTO INFERIOR ESQUERDO */
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 1px solid rgba(57, 255, 20, 0.3);
-            backdrop-filter: blur(10px);
-        }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; font-weight: 500; }
 
-        .music-btn {
-            background: transparent;
-            border: 2px solid #39ff14;
-            color: #39ff14;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .field input, .field select {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
 
-        .music-btn:hover {
-            background: #39ff14;
-            color: #000;
-            box-shadow: 0 0 20px #39ff14;
-            transform: scale(1.1);
-        }
+  .field input::placeholder { color: #3a3f4a; }
+  .field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
 
-        .music-btn:active {
-            transform: scale(0.95);
-        }
+  .field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
 
-        .volume-slider {
-            width: 80px;
-            height: 5px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(57, 255, 20, 0.3);
-            border-radius: 5px;
-            outline: none;
-        }
+  .btn-add {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    letter-spacing: .02em;
+    white-space: nowrap;
+  }
 
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
-            background: #39ff14;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px #39ff14;
-        }
+  .btn-add:hover { background: var(--accent2); }
+  .btn-add:active { transform: scale(.98); }
 
-        .volume-slider::-moz-range-thumb {
-            width: 15px;
-            height: 15px;
-            background: #39ff14;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px #39ff14;
-            border: none;
-        }
+  .form-error {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #ef4444;
+    display: none;
+    align-items: center;
+    gap: 6px;
+  }
 
-        .music-label {
-            font-size: 1.2em;
-            color: #39ff14;
-        }
+  /* ── UNIT TABLES ── */
+  .unit-block { margin-bottom: 24px; }
 
-        /* Efeitos visuais extras */
-        .corner {
-            position: fixed;
-            width: 100px;
-            height: 100px;
-            border: 3px solid #39ff14;
-            opacity: 0.5;
-        }
+  .unit-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
 
-        .corner-tl {
-            top: 20px;
-            left: 20px;
-            border-right: none;
-            border-bottom: none;
-        }
+  .unit-pill {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    padding: 4px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
 
-        .corner-tr {
-            top: 20px;
-            right: 20px;
-            border-left: none;
-            border-bottom: none;
-        }
+  .unit-desc { font-size: 12px; color: var(--muted); }
 
-        .corner-bl {
-            bottom: 20px;
-            left: 20px;
-            border-right: none;
-            border-top: none;
-        }
+  .tbl-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
 
-        .corner-br {
-            bottom: 20px;
-            right: 20px;
-            border-left: none;
-            border-top: none;
-        }
+  table { width: 100%; border-collapse: collapse; }
 
-        /* Glitch effect */
-        .glitch {
-            position: relative;
-        }
+  thead th {
+    padding: 11px 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
 
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
 
-        .glitch::before {
-            animation: glitch-1 2s infinite linear alternate-reverse;
-            color: #ff0000;
-            z-index: -1;
-        }
+  tbody td { padding: 12px 16px; font-size: 13px; }
 
-        .glitch::after {
-            animation: glitch-2 3s infinite linear alternate-reverse;
-            color: #0000ff;
-            z-index: -2;
-        }
+  .td-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    width: 110px;
+  }
 
-        @keyframes glitch-1 {
-            0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(-2px, 2px); }
-            20% { clip-path: inset(20% 0 60% 0); transform: translate(2px, -2px); }
-            40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); }
-            60% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -2px); }
-            80% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
-        }
+  .td-name { font-weight: 500; color: var(--text); }
 
-        @keyframes glitch-2 {
-            0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(2px, -2px); }
-            20% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 2px); }
-            40% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
-            60% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
-            80% { clip-path: inset(5% 0 80% 0); transform: translate(2px, -2px); }
-        }
-    </style>
+  .td-cargo { width: 200px; }
+
+  .cargo-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .03em;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .td-del { width: 50px; text-align: center; }
+
+  .btn-del {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+    transition: color .15s, border-color .15s, background .15s;
+    line-height: 1;
+  }
+
+  .btn-del:hover { color: #ef4444; border-color: rgba(239,68,68,.3); background: rgba(239,68,68,.08); }
+
+  .empty-row td { text-align: center; padding: 28px; color: #3a3f4a; font-size: 13px; font-style: italic; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: #1a1f2b;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: transform .25s, opacity .25s;
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+
+  /* ── SETUP BANNER ── */
+  .setup-banner {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: #f59e0b;
+    line-height: 1.7;
+  }
+
+  .setup-banner strong { color: #fbbf24; }
+  .setup-banner code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: rgba(0,0,0,.3); padding: 1px 6px; border-radius: 4px; }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    outline: none;
+    width: 220px;
+    transition: border-color .2s;
+  }
+
+  .search-bar::placeholder { color: #3a3f4a; }
+  .search-bar:focus { border-color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .form-row { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .content { padding: 16px; }
+  }
+</style>
 </head>
 <body>
-    <!-- Background -->
-    <div class="background">
-        <div class="grid"></div>
-        <div class="scanlines"></div>
-    </div>
 
-    <!-- Cantos decorativos -->
-    <div class="corner corner-tl"></div>
-    <div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div>
-    <div class="corner corner-br"></div>
+<!-- ══════════════════ FIREBASE CONFIG ══════════════════
+     COMO CONFIGURAR PARA TODOS VEREM OS MESMOS DADOS:
 
-    <!-- Partículas -->
-    <div class="particles">
-        <div class="particle" style="left: 5%; animation-delay: 0s;"></div>
-        <div class="particle" style="left: 15%; animation-delay: 1s;"></div>
-        <div class="particle" style="left: 25%; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 35%; animation-delay: 0.5s;"></div>
-        <div class="particle" style="left: 45%; animation-delay: 1.5s;"></div>
-        <div class="particle" style="left: 55%; animation-delay: 2.5s;"></div>
-        <div class="particle" style="left: 65%; animation-delay: 0.8s;"></div>
-        <div class="particle" style="left: 75%; animation-delay: 1.8s;"></div>
-        <div class="particle" style="left: 85%; animation-delay: 2.8s;"></div>
-        <div class="particle" style="left: 95%; animation-delay: 0.3s;"></div>
-    </div>
+     1. Acesse https://console.firebase.google.com
+     2. Crie um projeto gratuito
+     3. Em "Realtime Database", crie um banco
+     4. Em "Configurações do projeto > Seus apps", copie o config
+     5. Substitua os valores abaixo pelos do seu projeto
+     6. Nas regras do banco, coloque: { "rules": { ".read": true, ".write": true } }
+     7. Hospede o arquivo em qualquer serviço (GitHub Pages, Netlify etc.)
 
-    <!-- Container principal -->
-    <div class="container">
-        <div class="logo-container">
-            <div class="flag">🇧🇷</div>
-            <h1 class="server-name glitch" data-text="GMBR">GMBR</h1>
-            <p class="gamemode">Trouble in Terrorist Town</p>
-        </div>
+     SEM CONFIGURAR: funciona normalmente, mas os dados ficam só no seu navegador.
+═══════════════════════════════════════════════════════ -->
 
-        <!-- Info do jogador -->
-        <div class="player-info">
-            <p><span class="label">Jogador:</span> <span id="player-name">Carregando...</span></p>
-            <p><span class="label">Mapa:</span> <span id="map-name">Carregando...</span></p>
-        </div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        <!-- Barra de progresso -->
-        <div class="progress-container">
-            <div class="progress-text">
-                <span>Carregando...</span>
-                <span id="progress-percent">0%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
-            </div>
-            <div class="download-status" id="download-status"></div>
-        </div>
+  // ★ SUBSTITUA ABAIXO COM SEU CONFIG DO FIREBASE ★
+  const FIREBASE_CONFIG = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
+    projectId: "SEU_PROJETO",
+  };
 
-        <!-- Dicas -->
-        <div class="tips-container">
-            <p class="tip" id="tip-text">Descubra os traidores antes que seja tarde demais!</p>
-        </div>
-    </div>
+  const USE_FIREBASE = FIREBASE_CONFIG.apiKey !== "SUA_API_KEY";
 
-    <!-- Controle de música -->
-    <div class="music-control">
-        <span class="music-label">🎵</span>
-        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">⏸</button>
-        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="30" oninput="setVolume(this.value)">
-    </div>
+  let db = null;
+  let agentsRef = null;
+  let agents = [];
 
-    <!-- Player de áudio -->
-    <audio id="background-music" loop preload="auto">
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
+  const UNITS = [
+    { key:"DIRGERAL", label:"Diretor Geral",    desc:"Direção Geral",                                    color:"#eab308", bg:"rgba(234,179,8,0.15)",  dir:true },
+    { key:"VICEDIR",  label:"Vice-Diretor",    desc:"Vice-Direção",                                     color:"#eab308", bg:"rgba(234,179,8,0.15)",  dir:true },
+    { key:"DIREXEC",  label:"Dir. Executivo",  desc:"Diretoria Executiva",                              color:"#eab308", bg:"rgba(234,179,8,0.15)",  dir:true },
+    { key:"DIROP",    label:"Dir. Operacional",desc:"Diretoria Operacional",                            color:"#eab308", bg:"rgba(234,179,8,0.15)",  dir:true },
+    { key:"CORE",    label:"1º CORE",          desc:"Comando de Operações e Repressão Especializada",   color:"#ef4444", bg:"rgba(239,68,68,0.13)"        },
+    { key:"GARRA",   label:"2º GARRA",         desc:"Grupo Armado de Repressão a Roubos e Assaltos",    color:"#22c55e", bg:"rgba(34,197,94,0.13)"         },
+    { key:"DRACO",   label:"3º DRACO",         desc:"Divisão de Repressão a Ações Criminosas Org.",     color:"#3b82f6", bg:"rgba(59,130,246,0.13)"        },
+    { key:"SAT",     label:"4º SAT",           desc:"Serviço de Ação Tática",                           color:"#a855f7", bg:"rgba(168,85,247,0.13)"        },
+    { key:"DEIC",    label:"5º DEIC",          desc:"Departamento Estadual de Investigações Criminais",  color:"#e2e8f0", bg:"rgba(226,232,240,0.1)"        },
+    { key:"INV",     label:"6º Investigador",  desc:"Setor de Investigação",                            color:"#9ca3af", bg:"rgba(156,163,175,0.13)"        },
+  ];
 
-    <script>
-        // ========== CONFIGURAÇÕES ==========
-        const tips = [
-            "Descubra os traidores antes que seja tarde demais!",
-            "Detetives podem usar equipamentos especiais para investigar.",
-            "Cuidado! Qualquer um pode ser um traidor...",
-            "Não mate inocentes! RDM é proibido.",
-            "Use o corpo dos mortos para descobrir pistas.",
-            "Traidores podem comprar armas especiais no menu T.",
-            "Trabalhe em equipe para sobreviver!",
-            "Preste atenção nos sons e movimentos suspeitos.",
-            "O karma baixo reduz seu dano - jogue limpo!",
-            "Comunique-se com sua equipe usando o chat de voz."
-        ];
-
-        let currentTip = 0;
-        let isPlaying = false;
-        const audio = document.getElementById('background-music');
-
-        // Configurar volume inicial e tempo de início
-        audio.volume = 0.3;
-        audio.currentTime = 50; // COMEÇA AOS 50 SEGUNDOS
-
-        // Rotação de dicas
-        function rotateTips() {
-            const tipElement = document.getElementById('tip-text');
-            currentTip = (currentTip + 1) % tips.length;
-            tipElement.style.animation = 'none';
-            tipElement.offsetHeight; // Trigger reflow
-            tipElement.textContent = tips[currentTip];
-            tipElement.style.animation = 'fadeInOut 8s infinite';
-        }
-
-        setInterval(rotateTips, 8000);
-
-        // ========== FUNÇÕES DO GMOD ==========
-        
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            // Não precisamos usar essas informações aqui
-        }
-
-        function SetPlayerName(name) {
-            document.getElementById('player-name').textContent = name || 'Jogador';
-        }
-
-        function SetMap(mapname) {
-            document.getElementById('map-name').textContent = mapname || 'Carregando...';
-        }
-
-        function SetFilesTotal(total) {
-            window.totalFiles = total;
-        }
-
-        function SetFilesNeeded(needed) {
-            if (window.totalFiles && window.totalFiles > 0) {
-                const downloaded = window.totalFiles - needed;
-                const percent = Math.round((downloaded / window.totalFiles) * 100);
-                updateProgress(percent);
-            }
-        }
-
-        function DownloadingFile(fileName) {
-            const statusEl = document.getElementById('download-status');
-            statusEl.classList.add('active');
-            
-            let displayName = fileName;
-            if (fileName.length > 50) {
-                displayName = '...' + fileName.substring(fileName.length - 47);
-            }
-            statusEl.textContent = '📥 ' + displayName;
-        }
-
-        function SetStatusChanged(status) {
-            const statusEl = document.getElementById('download-status');
-            statusEl.textContent = status;
-        }
-
-        function updateProgress(percent) {
-            const fill = document.getElementById('progress-fill');
-            const text = document.getElementById('progress-percent');
-            fill.style.width = percent + '%';
-            text.textContent = percent + '%';
-        }
-
-        // ========== CONTROLE DE MÚSICA ==========
-        
-        function toggleMusic() {
-            const btn = document.getElementById('music-toggle');
-            
-            if (isPlaying) {
-                audio.pause();
-                btn.textContent = '▶';
-                isPlaying = false;
-            } else {
-                audio.play().then(() => {
-                    btn.textContent = '⏸';
-                    isPlaying = true;
-                }).catch(err => {
-                    console.log('Erro ao tocar:', err);
-                });
-            }
-        }
-
-        function setVolume(value) {
-            audio.volume = value / 100;
-        }
-
-        // Loop infinito - quando terminar, volta para 50 segundos
-        audio.addEventListener('ended', function() {
-            audio.currentTime = 50;
-            audio.play();
+  function init() {
+    if (USE_FIREBASE) {
+      try {
+        const app = initializeApp(FIREBASE_CONFIG);
+        db = getDatabase(app);
+        agentsRef = ref(db, "agents");
+        onValue(agentsRef, snap => {
+          agents = [];
+          snap.forEach(child => agents.push({ ...child.val(), _key: child.key }));
+          render();
+          document.getElementById("statusText").textContent = "Online · Firebase";
         });
+        document.getElementById("setupBanner").style.display = "none";
+      } catch(e) {
+        fallbackLocal();
+      }
+    } else {
+      fallbackLocal();
+    }
+  }
 
-        // Inicialização
-        window.onload = function() {
-            // Tenta tocar automaticamente após 500ms
-            setTimeout(() => {
-                audio.play().then(() => {
-                    document.getElementById('music-toggle').textContent = '⏸';
-                    isPlaying = true;
-                }).catch(err => {
-                    console.log('Autoplay bloqueado - usuário precisa interagir primeiro');
-                    // Mantém o botão como play
-                    document.getElementById('music-toggle').textContent = '▶';
-                });
-            }, 500);
-            
-            // Simula progresso para teste (remova em produção)
-            // let testProgress = 0;
-            // setInterval(() => {
-            //     testProgress += 1;
-            //     if (testProgress <= 100) updateProgress(testProgress);
-            // }, 100);
-        };
+  function fallbackLocal() {
+    document.getElementById("statusText").textContent = "Local · Configure o Firebase";
+    try { agents = JSON.parse(localStorage.getItem("pol_agents") || "[]"); } catch(e){ agents=[]; }
+    render();
+  }
 
-        // Permite iniciar música com qualquer interação
-        document.addEventListener('click', function initAudio() {
-            if (!isPlaying) {
-                audio.play().then(() => {
-                    document.getElementById('music-toggle').textContent = '⏸';
-                    isPlaying = true;
-                }).catch(err => {
-                    console.log('Erro ao tocar:', err);
-                });
-            }
-        }, { once: true });
-    </script>
+  function saveLocal() {
+    localStorage.setItem("pol_agents", JSON.stringify(agents));
+  }
+
+  window.addAgent = function() {
+    const nome    = document.getElementById("fNome").value.trim();
+    const cargo   = document.getElementById("fCargo").value.trim();
+    const id      = document.getElementById("fId").value.trim();
+    const unidade = document.getElementById("fUnidade").value;
+    const err     = document.getElementById("fErr");
+
+    if (!nome || !cargo || !id || !unidade) {
+      err.style.display = "flex";
+      return;
+    }
+    err.style.display = "none";
+
+    const agent = { nome, cargo, id, unidade, ts: Date.now() };
+
+    if (USE_FIREBASE && agentsRef) {
+      push(agentsRef, agent);
+    } else {
+      agents.push({ ...agent, _key: agent.ts.toString() });
+      saveLocal();
+      render();
+    }
+
+    document.getElementById("fNome").value = "";
+    document.getElementById("fCargo").value = "";
+    document.getElementById("fId").value = "";
+    document.getElementById("fUnidade").value = "";
+    showToast("Agente registrado com sucesso");
+  };
+
+  window.delAgent = function(key) {
+    if (!confirm("Remover este agente?")) return;
+    if (USE_FIREBASE && db) {
+      remove(ref(db, "agents/" + key));
+    } else {
+      agents = agents.filter(a => a._key !== key);
+      saveLocal();
+      render();
+    }
+  };
+
+  let searchQuery = "";
+  window.setSearch = function(v) {
+    searchQuery = v.toLowerCase();
+    render();
+  };
+
+  window.scrollToUnit = function(key) {
+    document.getElementById("unit_" + key)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    document.getElementById("nav_" + key)?.classList.add("active");
+  };
+
+  function render() {
+    renderStats();
+    renderTables();
+    renderNav();
+  }
+
+  function renderStats() {
+    const grid = document.getElementById("statsGrid");
+    grid.innerHTML = UNITS.map(u => {
+      const count = agents.filter(a => a.unidade === u.key).length;
+      return `<div class="stat-card" style="border-top:2px solid ${u.color}">
+        <div class="stat-num" style="color:${u.color}">${count}</div>
+        <div class="stat-lbl">${u.key}</div>
+        <div class="stat-sub">${u.label}</div>
+      </div>`;
+    }).join("");
+  }
+
+  function renderNav() {
+    UNITS.forEach(u => {
+      const el = document.getElementById("nav_" + u.key);
+      if (el) el.querySelector(".nav-count").textContent = agents.filter(a=>a.unidade===u.key).length;
+    });
+  }
+
+  function renderTables() {
+    const wrap = document.getElementById("tables");
+    const q = searchQuery;
+
+    const blocks = UNITS.map((u, i) => {
+      let list = agents.filter(a => a.unidade === u.key);
+      if (q) list = list.filter(a =>
+        a.nome.toLowerCase().includes(q) ||
+        a.cargo.toLowerCase().includes(q) ||
+        a.id.toLowerCase().includes(q)
+      );
+      list.sort((a,b) => a.nome.localeCompare(b.nome));
+
+      const rows = list.length
+        ? list.map(a => `<tr>
+            <td class="td-id">${esc(a.id)}</td>
+            <td class="td-name">${esc(a.nome)}</td>
+            <td class="td-cargo"><span class="cargo-pill" style="background:${u.bg};color:${u.color}">${esc(a.cargo)}</span></td>
+            <td class="td-del"><button class="btn-del" onclick="delAgent('${a._key}')">✕</button></td>
+          </tr>`).join("")
+        : `<tr class="empty-row"><td colspan="4">Nenhum agente registrado</td></tr>`;
+
+      const divider = (i === 0)
+        ? `<div style="font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#eab308;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(234,179,8,0.2)">&#9670; Diretoria</div>`
+        : (i === 4)
+        ? `<div style="font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">&#9670; Guarnições</div>`
+        : "";
+
+      return divider + `<div class="unit-block" id="unit_${u.key}">
+        <div class="unit-titlebar">
+          <span class="unit-pill" style="background:${u.bg};color:${u.color}">${u.label}</span>
+          <span class="unit-desc">${u.desc}</span>
+          <span style="margin-left:auto;font-size:12px;color:${u.color};font-weight:600;font-family:'JetBrains Mono',monospace">${list.length} agente${list.length!==1?"s":""}</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>ID / Matrícula</th>
+              <th>Nome do agente</th>
+              <th>Cargo / Patente</th>
+              <th></th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+    });
+    wrap.innerHTML = blocks.join("");
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.querySelector(".toast-msg").textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  init();
+</script>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7L12 2z"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">SIAG</div>
+        <div class="logo-sub">Sistema de Agentes</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-label">Guarnições</div>
+      <div class="nav-label" style="margin-top:4px">Diretoria</div>
+      <button class="nav-item active" id="nav_DIRGERAL" onclick="scrollToUnit('DIRGERAL')">
+        <span class="nav-dot" style="background:#eab308"></span>
+        Diretor Geral
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_VICEDIR" onclick="scrollToUnit('VICEDIR')">
+        <span class="nav-dot" style="background:#eab308"></span>
+        Vice-Diretor
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_DIREXEC" onclick="scrollToUnit('DIREXEC')">
+        <span class="nav-dot" style="background:#eab308"></span>
+        Dir. Executivo
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_DIROP" onclick="scrollToUnit('DIROP')">
+        <span class="nav-dot" style="background:#eab308"></span>
+        Dir. Operacional
+        <span class="nav-count">0</span>
+      </button>
+      <div class="nav-label" style="margin-top:12px">Guarnições</div>
+      <button class="nav-item" id="nav_CORE" onclick="scrollToUnit('CORE')">
+        <span class="nav-dot" style="background:#ef4444"></span>
+        1º CORE
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_GARRA" onclick="scrollToUnit('GARRA')">
+        <span class="nav-dot" style="background:#22c55e"></span>
+        2º GARRA
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_DRACO" onclick="scrollToUnit('DRACO')">
+        <span class="nav-dot" style="background:#3b82f6"></span>
+        3º DRACO
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_SAT" onclick="scrollToUnit('SAT')">
+        <span class="nav-dot" style="background:#a855f7"></span>
+        4º SAT
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_DEIC" onclick="scrollToUnit('DEIC')">
+        <span class="nav-dot" style="background:#e2e8f0"></span>
+        5º DEIC
+        <span class="nav-count">0</span>
+      </button>
+      <button class="nav-item" id="nav_INV" onclick="scrollToUnit('INV')">
+        <span class="nav-dot" style="background:#9ca3af"></span>
+        6º Investigador
+        <span class="nav-count">0</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="status-dot"></div>
+        <span id="statusText">Carregando...</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title">Registro de Agentes</div>
+      <div class="topbar-right">
+        <input class="search-bar" type="text" placeholder="Buscar agente..." oninput="setSearch(this.value)">
+        <div class="status-dot"></div>
+        <span class="status-text" id="statusText2">Sistema ativo</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- BANNER DE CONFIGURAÇÃO -->
+      <div class="setup-banner" id="setupBanner">
+        <strong>⚡ Configure o Firebase para compartilhar com a equipe:</strong><br>
+        Abra este arquivo em um editor de texto e localize a seção <code>FIREBASE_CONFIG</code>.<br>
+        Substitua os valores com os do seu projeto Firebase → hospede → todos acessam os mesmos dados em tempo real.<br>
+        <span style="color:#d97706;font-size:11px;margin-top:4px;display:block">Enquanto isso, os dados ficam salvos apenas neste navegador.</span>
+      </div>
+
+      <!-- ESTATÍSTICAS -->
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- FORMULÁRIO -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <span class="section-title">Novo Registro</span>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="fNome">Nome do agente</label>
+            <input type="text" id="fNome" placeholder="Nome completo">
+          </div>
+          <div class="field">
+            <label for="fCargo">Cargo / Patente</label>
+            <select id="fCargo">
+              <option value="">Selecionar cargo...</option>
+              <option value="Diretor">Diretor</option>
+              <option value="Vice-Diretor">Vice-Diretor</option>
+              <option value="Delegado">Delegado</option>
+              <option value="Delegado-Adjunto">Delegado-Adjunto</option>
+              <option value="Agente Especial">Agente Especial</option>
+              <option value="Perito">Perito</option>
+              <option value="Investigador">Investigador</option>
+              <option value="Agente">Agente</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fId">ID / Matrícula</label>
+            <input type="text" id="fId" placeholder="000123">
+          </div>
+          <div class="field">
+            <label for="fUnidade">Guarnição</label>
+            <select id="fUnidade">
+              <option value="">Selecionar...</option>
+              <optgroup label="── Diretoria ──">
+              <option value="DIRGERAL">Diretor Geral</option>
+              <option value="VICEDIR">Vice-Diretor</option>
+              <option value="DIREXEC">Dir. Executivo</option>
+              <option value="DIROP">Dir. Operacional</option>
+              </optgroup>
+              <optgroup label="── Guarnições ──">
+              <option value="CORE">1º CORE</option>
+              <option value="GARRA">2º GARRA</option>
+              <option value="DRACO">3º DRACO</option>
+              <option value="SAT">4º SAT</option>
+              <option value="DEIC">5º DEIC</option>
+              <option value="INV">6º Investigador</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;align-items:center;gap:14px;">
+          <button class="btn-add" onclick="addAgent()">+ Registrar agente</button>
+          <div class="form-error" id="fErr">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            Preencha todos os campos.
+          </div>
+        </div>
+      </div>
+
+      <!-- TABELAS POR GUARNIÇÃO -->
+      <div id="tables"></div>
+
+    </div>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span class="toast-msg"></span>
+</div>
+
 </body>
 </html>
